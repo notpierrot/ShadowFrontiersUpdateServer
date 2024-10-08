@@ -1,0 +1,243 @@
+Code "Shadow Cyloop color"
+//
+	#include "Reflection" noemit
+	#lib "Player"
+	#lib "Sonic"
+	#lib "SonicParameters"
+	#lib "BlackboardBattle"
+	
+	static bool isPhantomRush = false;
+//
+{
+    var SonicParametersInfo = Reflection.GetDataInfo<SonicParameters.Root>("player_common");
+    
+    if (SonicParametersInfo.pData == null)
+        return;
+    
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+	
+	var pBlackboardBattle = BlackboardBattle.Get();
+
+    if (pBlackboardBattle == null)
+        return;
+	
+	if (pBlackboardBattle->PhantomRushAmount >= 100.0f) {
+		isPhantomRush = true;
+	}
+	
+	if (pBlackboardBattle->PhantomRushAmount == 0.0f) {
+		isPhantomRush = false;
+	}
+	
+	if (!isPhantomRush) {
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.G, 0.25f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.R, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.G, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColor.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColor.G, 0.25f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColor.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColor.R, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColor.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColor.B, 0.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColorFlash.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColorFlash.G, 0.25f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColorFlash.B, 0.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColorFlash.R, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColorFlash.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColorFlash.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color0.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color1.G, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color0.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color1.G, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color0.G, 0.175f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color1.G, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[0].m_color.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[0].m_color.G, 0.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[0].m_color.B, 0.0f);
+		
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[1].m_color.R, 1.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[1].m_color.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[1].m_color.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[2].m_color.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[2].m_color.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[2].m_color.B, 0.0f);
+	}
+	else {
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.R, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColor.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColor.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColor.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColor.R, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColor.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColor.B, 0.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColorFlash.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColorFlash.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.startColorFlash.B, 0.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColorFlash.R, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColorFlash.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_crossline.endColorFlash.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color0.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color1.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[0].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color0.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color1.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[1].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color0.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color0.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color0.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color1.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color1.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_transparentLines[2].m_color1.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[0].m_color.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[0].m_color.G, 0.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[0].m_color.B, 0.0f);
+		
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[1].m_color.R, 1.0f);
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[1].m_color.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[1].m_color.B, 0.0f);
+		
+		RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[2].m_color.R, 1.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[2].m_color.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locusQuick.m_opaqueLines[2].m_color.B, 0.0f);
+	}
+}
+
+Code "Amy Cyloop color"
+//
+#include "Reflection" noemit
+#lib "Player"
+#lib "Amy"
+#lib "SonicParameters"
+//
+{
+    var SonicParametersInfo = Reflection.GetDataInfo<SonicParameters.Root>("player_common");
+    
+    if (SonicParametersInfo.pData == null)
+        return;
+    
+    if (Player.GetPlayerType() == Player.PlayerType.Amy) 
+    {
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.R, 0.95f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.G, 0.2f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.B, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.R, 0.6f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.B, 0.435f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.R, 0.95f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.G, 0.2f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.B, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.R, 0.6f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.G, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.B, 0.435f);
+    }
+}
+
+Code "Knuckles Cyloop color"
+//
+#include "Reflection" noemit
+#lib "Player"
+#lib "Knuckles"
+#lib "SonicParameters"
+//
+{
+    var SonicParametersInfo = Reflection.GetDataInfo<SonicParameters.Root>("player_common");
+    
+    if (SonicParametersInfo.pData == null)
+        return;
+    
+    if (Player.GetPlayerType() == Player.PlayerType.Knuckles) 
+    {
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.R, 0.75f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.G, 0.1f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.B, 0.1f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.R, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.G, 0.01f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.B, 0.01f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.R, 0.75f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.G, 0.1f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.B, 0.1f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.R, 0.5f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.G, 0.01f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.B, 0.01f);
+    }
+}
+
+Code "Tails Cyloop color"
+//
+#include "Reflection" noemit
+#lib "Player"
+#lib "Tails"
+#lib "SonicParameters"
+//
+{
+    var SonicParametersInfo = Reflection.GetDataInfo<SonicParameters.Root>("player_common");
+    
+    if (SonicParametersInfo.pData == null)
+        return;
+    
+    if (Player.GetPlayerType() == Player.PlayerType.Tails) 
+    {
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.R, 0.9f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.G, 0.75f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.startColor.B, 0.25f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.R, 0.575f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.G, 0.37f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_crossline.endColor.B, 0.0f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.R, 0.9f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.G, 0.75f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color0.B, 0.25f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.R, 0.575f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.G, 0.37f);
+        RFL_SET_PARAM(SonicParametersInfo, common.cyloop.locus.m_transparentLines[0].m_color1.B, 0.0f);
+    }
+}

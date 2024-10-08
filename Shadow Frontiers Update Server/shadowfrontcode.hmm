@@ -1,0 +1,585 @@
+Code "Custom Boost effects"
+//
+	#lib "Player"
+	#lib "Lua"
+	#lib "BlackboardBattle"
+	#include "BlackboardStatus" noemit
+	
+	using System.Collections.Generic;
+	
+	static bool boostVisible = false;
+	static bool boostVisibleChaos = false;
+	static bool driftShockwave = false;
+	static bool isPhantomRush = false;
+	
+	static List<Sonic.StateID> quickStepStatesList = new() {
+        Sonic.StateID.StateRightStepRun,
+        Sonic.StateID.StateLeftStepRun,
+        Sonic.StateID.StateQuickStepLeft,
+        Sonic.StateID.StateQuickStepRight
+    };
+//
+{
+	var pBlackboardStatus = BlackboardStatus.Get();
+	if (pBlackboardStatus == null)
+		return;
+	
+	var pBlackboardBattle = BlackboardBattle.Get();
+
+    if (pBlackboardBattle == null)
+        return;
+	
+	if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+		return;
+	
+	bool isBoost = IS_STATE_FLAG(IsBoost);
+	
+	bool isPhantomRushFlag = IS_COMBAT_FLAG(IsPhantomRush);
+	
+	
+	if (pBlackboardBattle->PhantomRushAmount >= 100.0f) {
+		isPhantomRush = true;
+	}
+	
+	if (pBlackboardBattle->PhantomRushAmount == 0.0f) {
+		isPhantomRush = false;
+	}
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+	
+	if (!quickStepStatesList.Contains(Player.State.GetCurrentStateID<Sonic.StateID>()) && isBoost && !isPhantomRush ||
+		!quickStepStatesList.Contains(Player.State.GetCurrentStateID<Sonic.StateID>()) && isBoost && !isPhantomRushFlag && isPhantomRush ||
+		currentState == Sonic.StateID.StateDrift && Player.Input.IsDown(Player.InputActionType.PlayerBoost) && !isPhantomRush ||
+		currentState == Sonic.StateID.StateDrift && Player.Input.IsDown(Player.InputActionType.PlayerBoost) && !isPhantomRushFlag && isPhantomRush) {
+		if (!boostVisible) {
+			Player.Effect.PlayEffect("boost_colorline", !pBlackboardStatus->IsSuper ? "ec_so_stomp_locus02" : "" );
+			Player.Effect.PlayEffect("boost_gpu", !pBlackboardStatus->IsSuper ? "ec_sh_pow_dash_ge01_gpu01" : "" );
+			Player.Effect.PlayEffect("boost_lightningline", !pBlackboardStatus->IsSuper ? "ec_sh_pow_dash_ge01_lightning_line01" : "" );
+			Player.Effect.PlayEffect("boost_lightning1", !pBlackboardStatus->IsSuper ? "ec_sh_pow_dash_ge01_lightning01" : "" );
+			Player.Effect.PlayEffect("boost_lightning3", !pBlackboardStatus->IsSuper ? "ec_sh_pow_dash_ge01_lightning03" : "" );
+			Player.Effect.PlayEffect("boost_plight", !pBlackboardStatus->IsSuper ? "ec_sh_pow_dash_ge01_plight01" : "" );
+			boostVisible = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("boost_colorline");
+		Player.Effect.StopEffect("boost_gpu");
+		Player.Effect.StopEffect("boost_lightningline");
+		Player.Effect.StopEffect("boost_lightning1");
+		Player.Effect.StopEffect("boost_lightning3");
+		Player.Effect.StopEffect("boost_plight");
+		boostVisible = false;
+	}
+	
+	if (!quickStepStatesList.Contains(Player.State.GetCurrentStateID<Sonic.StateID>()) && isBoost && isPhantomRushFlag && isPhantomRush ||
+		currentState == Sonic.StateID.StateDrift && Player.Input.IsDown(Player.InputActionType.PlayerBoost) && isPhantomRushFlag && isPhantomRush) {
+		if (!boostVisibleChaos) {
+			Player.Effect.PlayEffect("boost_colorline_chaos", "ec_so_stomp_locus01_chaos");
+			Player.Effect.PlayEffect("boost_gpu_chaos", "ec_sh_pow_dash_ge01_gpu01");
+			Player.Effect.PlayEffect("boost_lightningline_chaos", "ec_sh_pow_dash_ge01_lightning_line01_chaos");
+			Player.Effect.PlayEffect("boost_lightning1_chaos", "ec_sh_pow_dash_ge01_lightning01_chaos");
+			Player.Effect.PlayEffect("boost_lightning3_chaos", "ec_sh_pow_dash_ge01_lightning03_chaos");
+			Player.Effect.PlayEffect("boost_plight_chaos", "ec_sh_pow_dash_ge01_plight01_chaos");
+			boostVisibleChaos = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("boost_colorline_chaos");
+		Player.Effect.StopEffect("boost_gpu_chaos");
+		Player.Effect.StopEffect("boost_lightningline_chaos");
+		Player.Effect.StopEffect("boost_lightning1_chaos");
+		Player.Effect.StopEffect("boost_lightning3_chaos");
+		Player.Effect.StopEffect("boost_plight_chaos");
+		boostVisibleChaos = false;
+	}
+	
+	if (isPhantomRushFlag && isPhantomRush) {
+		Sonic.Effect.SetCyloopAuraVisibility(true);
+	}
+	else {
+		Sonic.Effect.SetCyloopAuraVisibility(false);
+	}
+	
+	
+	if (currentState == Sonic.StateID.StateDrift && Player.Input.IsDown(Player.InputActionType.PlayerBoost)) {
+		if (!driftShockwave) {
+			Player.Effect.PlayEffect("boost_shockwave", "ec_so_pow_boost_impact_fv01_distortion01" );
+			driftShockwave = true;
+		}
+    }
+	else {
+		Player.Effect.StopEffect("boost_shockwave");
+        driftShockwave = false;
+	}
+}
+
+Code "Teleport Quickstep"
+//
+	#lib "Player"
+    using System.Collections.Generic;
+
+    static List<Sonic.StateID> quickStepStates = new() {
+        Sonic.StateID.StateRightStepRun,
+        Sonic.StateID.StateLeftStepRun,
+        Sonic.StateID.StateQuickStepLeft,
+        Sonic.StateID.StateQuickStepRight,
+        Sonic.StateID.StateTakeBehind
+    };
+	
+	static bool tpVisible = false;
+	static bool isTakeBehind = false;
+//
+{
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+	
+    if (quickStepStates.Contains(Player.State.GetCurrentStateID<Sonic.StateID>()) && !tpVisible) {
+        Player.Effect.PlayEffect("quickstep_tp_line", BlackboardStatus.IsSuper() ? "" : "ec_sh_quickstep_tp_line");
+        Player.Effect.PlayEffect("quickstep_tp_plight", BlackboardStatus.IsSuper() ? "" : "ec_sh_quickstep_tp_plight");
+        Player.Effect.PlayEffect("quickstep_tp_circle", BlackboardStatus.IsSuper() ? "" : "ec_sh_quickstep_tp_circle");
+        Player.Effect.PlayEffect("quickstep_tp_glow", BlackboardStatus.IsSuper() ? "" : "ec_sh_quickstep_tp_glow");
+		
+        Player.Sound.PlaySound("sn_skateboard_change");
+		
+        tpVisible = true;
+    }
+    else if (!quickStepStates.Contains(Player.State.GetCurrentStateID<Sonic.StateID>()) && tpVisible) {
+        tpVisible = false;
+        Player.Effect.StopEffect("quickstep_tp_line");
+		Player.Effect.StopEffect("quickstep_tp_plight");
+		Player.Effect.StopEffect("quickstep_tp_circle");
+		Player.Effect.StopEffect("quickstep_tp_glow");
+    }
+	
+	if (currentState == Sonic.StateID.StateTakeBehind) {
+		if (!isTakeBehind) {
+			Player.Animation.SetAnimation("QUICKSTEP_RIGHT");
+			isTakeBehind = true;
+		}
+	}
+	else {
+		isTakeBehind = false;
+	}
+	
+}
+
+Code "Teleport Homing Attack"
+//
+    #lib "GameObject"
+    #lib "Player"
+	#lib "Reflection"
+	#lib "SonicParameters"
+	
+	#include "Reflection" noemit
+    using System.Collections.Generic;
+	
+	static bool showTeleport = false;
+	static bool showLocus = false;
+//
+{
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+
+    var pGameObject = Player.Status.GetLockOnTarget();
+	
+	var SonicParametersInfo = Reflection.GetDataInfo<SonicParameters.Root>("player_common");
+	
+	var StandardCameraConfig = Reflection.GetDataInfo<StandardCameraConfig.Root>("standard_camera");
+
+	if (SonicParametersInfo.pData == null)
+		return;
+	
+	if (StandardCameraConfig.pData == null)
+		return;
+	
+    bool targetEnemy = pGameObject != null && (GameObject.GetGOC(pGameObject, "GOCHealth") != null || GameObject.GetGOC(pGameObject, "GOCEyesight") != null)
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+	
+	if (targetEnemy) {
+		RFL_SET_PARAM(SonicParametersInfo, forwardView.modePackage.homingAttack.sonic.speed, 120f);
+		RFL_SET_PARAM(SonicParametersInfo, cyberspace.modePackage.homingAttack.sonic.speed, 120f);
+		RFL_SET_PARAM(SonicParametersInfo, cyberspaceSV.modePackage.homingAttack.sonic.speed, 120f);
+	}
+	
+	if (!targetEnemy) {
+		RFL_SET_PARAM(SonicParametersInfo, forwardView.modePackage.homingAttack.sonic.speed, 60f);
+		RFL_SET_PARAM(SonicParametersInfo, cyberspace.modePackage.homingAttack.sonic.speed, 80f);
+		RFL_SET_PARAM(SonicParametersInfo, cyberspaceSV.modePackage.homingAttack.sonic.speed, 80f);
+	}
+	
+	if (currentState == Sonic.StateID.StateHomingAttack && targetEnemy ||
+		currentState == Sonic.StateID.StateHomingAttackInStorm && targetEnemy) {
+		if (!showTeleport) {
+			Player.Effect.StopAnimationEffects();
+		
+			Player.Animation.SetAnimation("QUICKSTEP_LEFT");
+		
+			int quickStepSound = Player.Sound.PlaySound("sn_homing");
+		
+			Player.Sound.StopSound(&quickStepSound);
+		
+			Player.Sound.PlaySound("sn_skateboard_change");
+		
+			Player.Effect.PlayEffect("quickstep_tp_line", "ec_sh_quickstep_tp_line");
+			Player.Effect.PlayEffect("quickstep_tp_plight", "ec_sh_quickstep_tp_plight");
+			Player.Effect.PlayEffect("quickstep_tp_circle", "ec_sh_quickstep_tp_circle");
+			Player.Effect.PlayEffect("quickstep_tp_glow", "ec_sh_quickstep_tp_glow");
+			
+			showTeleport = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("quickstep_tp_line");
+		Player.Effect.StopEffect("quickstep_tp_plight");
+		Player.Effect.StopEffect("quickstep_tp_circle");
+		Player.Effect.StopEffect("quickstep_tp_glow");
+		
+		showTeleport = false;
+	}
+	
+	if (currentState == Sonic.StateID.StateHomingAttack && !targetEnemy ||
+		currentState == Sonic.StateID.StateHomingAttackInStorm && !targetEnemy) {
+		if (!showLocus) {
+			Player.Effect.PlayEffect("homing_locus", BlackboardStatus.IsSuper() ? "ec_ss_stomp_locus01" : "ec_so_stomp_locus02");
+			showLocus = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("homing_locus");
+		showLocus = false;
+	}
+}
+
+Code "Stomp Trail"
+//
+	#lib "Player"
+	#lib "Sonic"
+	
+	static bool showStomp = false;
+//
+{
+	if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+	
+	var pBlackboardStatus = BlackboardStatus.Get();
+	if (pBlackboardStatus == null)
+		return;
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+	
+	if (currentState == Sonic.StateID.StateStompingDown) {
+		if (!showStomp) {
+			Player.Effect.PlayEffect("stomp_trail", !pBlackboardStatus->IsSuper ? "ec_so_stomp_locus03" : "" );
+			Player.Effect.PlayEffect("stomp_trail", !pBlackboardStatus->IsSuper ? "ec_so_stomp_locus03" : "" );
+			showStomp = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("stomp_trail");
+		showStomp = false;
+	}
+}
+
+Code "Jet Lights"
+//
+    #lib "Player"
+    #include "BlackboardStatus" noemit
+	
+	static bool jetVisible = false;
+//
+{
+	var pBlackboardStatus = BlackboardStatus.Get();
+	
+    if (pBlackboardStatus == null)
+        return;
+
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+    
+    if (Player.Kinematics.GetHorizontalMagnitude() > 12.4f && !jetVisible && Player.Status.IsGrounded() && currentState == Sonic.StateID.StateRun) {
+        Player.Effect.PlayEffect("jet_light", !pBlackboardStatus->IsSuper ? "ec_so_skill_psycho_aura01_plight01" : "" );
+        jetVisible = true;
+    }
+	
+    if (!Player.Status.IsGrounded() || Player.Kinematics.GetHorizontalMagnitude() <= 12.4f && jetVisible) {
+        Player.Effect.StopEffect("jet_light");
+        jetVisible = false;
+    }
+}
+
+Code "Cyclone Kick effects"
+//
+	#lib "Player"
+	#lib "Sonic"
+	#lib "Time"
+	
+	#load "System.Numerics.dll"
+	using System.Numerics;
+	
+	static bool isCycloneKick = false;
+	
+	static int LoopTimeTrigger = 0;
+	
+	static float cycloneTimer = 0.0f;
+	
+	static bool cycloneBool = false;
+	
+	if (LoopTimeTrigger < 32) {
+		LoopTimeTrigger += 1;
+	}
+	else {
+		LoopTimeTrigger = 0;
+	}
+//
+
+{
+	var pBlackboardStatus = BlackboardStatus.Get();
+    if (pBlackboardStatus == null)
+        return;
+
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+	
+	if (currentState == Sonic.StateID.StateChargeAttack) {
+		cycloneTimer += Time.GetDeltaTime();
+	}
+	else {
+		cycloneTimer = 0.0f;
+	}
+	
+	if (currentState == Sonic.StateID.StateChargeAttack &&
+		cycloneTimer >= 0.5f && cycloneBool == false) {
+		if (!isCycloneKick) {
+			Player.Effect.PlayEffect("cyclone_spiral1", "ec_so_skill_chargeatk01_spiral01");
+			Player.Effect.PlayEffect("cyclone_spiral2", "ec_so_skill_chargeatk01_spiral02");
+			Player.Effect.PlayEffect("cyclone_gpu", "ec_so_skill_chargeatk01_gpu01");
+			Player.Effect.PlayEffect("cyclone_plight", "ec_so_skill_chargeatk_footaura01_pointlight01");
+			Player.Effect.PlayEffect("cyclone_spiral3", "ec_so_skill_chargeatk01_spiral03");
+			Player.Effect.PlayEffect("cyclone_lightning", "ec_so_skill_chargeatk_footaura01_lightning01");
+			Player.Effect.PlayEffect("cyclone_circle1", "ec_so_skill_chargeatk01_circle01");
+			Player.Effect.PlayEffect("cyclone_circle2", "ec_so_skill_chargeatk01_circle02");
+			isCycloneKick = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("cyclone_spiral1");
+		Player.Effect.StopEffect("cyclone_spiral2");
+		Player.Effect.StopEffect("cyclone_gpu");
+		Player.Effect.StopEffect("cyclone_plight");
+		Player.Effect.StopEffect("cyclone_spiral3");
+		Player.Effect.StopEffect("cyclone_lightning");
+		Player.Effect.StopEffect("cyclone_circle1");
+		Player.Effect.StopEffect("cyclone_circle2");
+		isCycloneKick = false;
+	}
+	
+	if (currentState == Sonic.StateID.StateChargeAttack &&
+		cycloneTimer >= 0.5f && cycloneBool == false) {
+		if (LoopTimeTrigger == 0 || LoopTimeTrigger == 16) {
+			Player.Effect.PlayEffect("cyclone_dist", "ec_so_skill_chargeatk01_dist01");
+		}
+		else {
+			Player.Effect.StopEffect("cyclone_dist");
+		}
+	}
+}
+
+Code "Phantom Rush text change"
+//
+	#lib "Converse"
+//
+{
+	Converse.Redirect("hud_sonic_accelLvUP", "CHAOS BOOST");
+}
+
+
+Code "Loop Kick effects"
+//
+	#lib "Player"
+	#lib "Sonic"
+	
+	#load "System.Numerics.dll"
+	using System.Numerics;
+	
+	static bool isLoopKick = false;
+//
+{
+	var pBlackboardStatus = BlackboardStatus.Get();
+    if (pBlackboardStatus == null)
+        return;
+
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+	
+	if (currentState == Sonic.StateID.StateLoopKick) {
+		if (!isLoopKick) {
+			Player.Animation.SetAnimation("QUICKSTEP_LEFT");
+			
+			int quickStepSound = Player.Sound.PlaySound("sn_riderkick_loop");
+		
+			Player.Sound.StopSound(&quickStepSound);
+		
+			Player.Sound.PlaySound("sn_skateboard_change");
+			
+			Player.Effect.PlayEffect("loopkick_tp_line", "ec_sh_quickstep_tp_line");
+			Player.Effect.PlayEffect("loopkick_tp_plight", "ec_sh_quickstep_tp_plight");
+			Player.Effect.PlayEffect("loopkick_tp_circle", "ec_sh_quickstep_tp_circle");
+			Player.Effect.PlayEffect("loopkick_tp_glow", "ec_sh_quickstep_tp_glow");
+			
+			
+			
+			isLoopKick = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("loopkick_tp_line");
+		Player.Effect.StopEffect("loopkick_tp_plight");
+		Player.Effect.StopEffect("loopkick_tp_circle");
+		Player.Effect.StopEffect("loopkick_tp_glow");
+		isLoopKick = false;
+	}
+}
+
+Code "Punch Kick effects"
+//
+	#lib "Player"
+	#lib "Sonic"
+	
+	#load "System.Numerics.dll"
+	using System.Numerics;
+	
+	static bool isPunch = false;
+	static bool isKick = false;
+//
+{
+	var pBlackboardStatus = BlackboardStatus.Get();
+    if (pBlackboardStatus == null)
+        return;
+
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+	
+	var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+	
+	if (currentState == Sonic.StateID.StateAcceleCombo1) {
+		if (!isPunch) {
+			Player.Effect.PlayEffect("punch_slashaura", BlackboardStatus.IsSuper() ? "ec_ss_accelecombo01_slash01" : "ec_sh_accelecombo01_slash01");
+			Player.Effect.PlayEffect("punch_slashaura_black", "ec_sh_accelecombo01_slashblk01");
+			isPunch = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("punch_slashaura");
+		Player.Effect.StopEffect("punch_slashaura_black");
+		isPunch = false;
+	}
+	
+	if (currentState == Sonic.StateID.StateAcceleCombo2) {
+		if (!isKick) {
+			Player.Effect.PlayEffect("kick_slashaura", BlackboardStatus.IsSuper() ? "ec_ss_accelecombo02_slash01" : "ec_sh_accelecombo02_slash01");
+			Player.Effect.PlayEffect("kick_slashaura_black", "ec_sh_accelecombo02_slashblk01");
+			isKick = true;
+		}
+	}
+	else {
+		Player.Effect.StopEffect("kick_slashaura");
+		Player.Effect.StopEffect("kick_slashaura_black");
+		isKick = false;
+	}
+}
+
+Code "Combat Changes"
+//
+    #lib "Player"
+	#lib "Reflection"
+	#lib "SonicParameters"
+	
+	#include "Reflection" noemit
+    using System.Collections.Generic;
+	
+//
+{
+	var SonicParametersInfo = Reflection.GetDataInfo<SonicParameters.Root>("player_common");
+
+	if (SonicParametersInfo.pData == null)
+		return;
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.comboFinishB.velocity.X, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.comboFinishB.velocity.Y, -18.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.comboFinishB.velocity.Z, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.acceleComboFinishB.velocity.X, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.acceleComboFinishB.velocity.Y, -18.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.acceleComboFinishB.velocity.Z, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.comboFinishF.velocity.X, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.comboFinishF.velocity.Y, 10.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.comboFinishF.velocity.Z, 12.0f);	
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.acceleComboFinishF.velocity.X, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.acceleComboFinishF.velocity.Y, 10.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.acceleComboFinishF.velocity.Z, 12.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.riseDistance, 0.25f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.preRiseDistance, 0.25f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.postRiseDistance, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.lastVelocity, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.riseDistance, 0.25f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.preRiseDistance, 0.25f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.postRiseDistance, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.lastVelocity, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.riseDistance, 0.25f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.preRiseDistance, 0.25f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.postRiseDistance, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.lastVelocity, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.chargeAttack.velocity.X, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.chargeAttack.velocity.Y, 5.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.chargeAttack.velocity.Z, 7.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.chargeAttackLast.velocity.X, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.chargeAttackLast.velocity.Y, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.chargeAttackLast.velocity.Z, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.spiralRadius, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.riseTime, 0.4f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.spiralAngularSpeed, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.sonic.lastHitTime, 0.35f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.spiralRadius, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.riseTime, 0.4f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.spiralAngularSpeed, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic1.lastHitTime, 0.35f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.spiralRadius, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.riseTime, 0.4f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.spiralAngularSpeed, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.chargeAtackSet.superSonic2.lastHitTime, 0.35f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.sonic.loopSpeedCurveRatio, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.sonic.loopEndStopTime, 0.0000001f);
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.sonic.loopRadius, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.superSonic1.loopSpeedCurveRatio, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.superSonic1.loopEndStopTime, 0.0000001f);
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.superSonic1.loopRadius, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.superSonic2.loopSpeedCurveRatio, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.superSonic2.loopEndStopTime, 0.0000001f);
+	RFL_SET_PARAM(SonicParametersInfo, common.loopKickSet.superSonic2.loopRadius, 0.0f);
+	
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.loopKick.velocity.X, 0.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.loopKick.velocity.Y, 5.0f);
+	RFL_SET_PARAM(SonicParametersInfo, common.commonPackage.attack.loopKick.velocity.Z, 50.0f);
+}

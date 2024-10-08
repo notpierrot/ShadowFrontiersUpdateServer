@@ -1,0 +1,22 @@
+Code "Fix occlusion"
+//
+    #include "Reflection" noemit
+
+    #lib "Reflection"
+    #lib "NeedleFxSceneData"
+//
+{
+    string[] levelIds = {"w1r01", "w1r02", "w1r03", "w1r04", "w2r01", "w3r01", "w1f01", "w5r01", "w5t01", "w5t02", "w6d01", "w8d01", "w9d04", "w6d02", "w7d04", "w6d06", "w9d06", "w6d05", "w8d03", "w7d02", "w7d06", "w8d04", "w6d03", "w8d05", "w6d04", "w6d08", "w8d02", "w6d09", "w6d07", "w8d06", "w7d03", "w7d08", "w9d02", "w7d01", "w9d03", "w6d10", "w7d07", "w9d05", "w7d05", "w9d07"};
+
+    foreach (string levelId in levelIds) {
+        var NeedleFxSceneDataInfo = Reflection.GetDataInfo<NeedleFxSceneData.Root>(levelId);
+
+        if (NeedleFxSceneDataInfo.pData == null)
+            continue;
+
+        RFL_SET_PARAM(NeedleFxSceneDataInfo, items[0].occlusionCapsule.occlusionColor.R, 35);
+        RFL_SET_PARAM(NeedleFxSceneDataInfo, items[0].occlusionCapsule.occlusionColor.G, 35);
+        RFL_SET_PARAM(NeedleFxSceneDataInfo, items[0].occlusionCapsule.occlusionColor.B, 35);
+        RFL_SET_PARAM(NeedleFxSceneDataInfo, items[0].occlusionCapsule.occlusionColor.A, 255);
+    }
+}
