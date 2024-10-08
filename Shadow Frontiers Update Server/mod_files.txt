@@ -1,2 +1,6 @@
 add mod.ini
 add raw/character/supersonic.pac
+add raw/character/supersonic2.pac
+add raw/EffectCommon.pac
+add raw/dlc/dlccrm/dlccrm.pac
+add raw/dlc/dlcmhr/dlcmhr_costume_hunter.pac
